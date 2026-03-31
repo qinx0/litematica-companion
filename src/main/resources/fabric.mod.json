@@ -1,0 +1,37 @@
+{
+	"schemaVersion": 1,
+	"id": "litematica-companion",
+	"version": "${version}",
+	"name": "Litematica Companion",
+	"description": "Companion mod for Litematica to show a scrollable blocklist and other things in the inventory screen about the loaded schematic.",
+	"authors": [
+		"qinx"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/litematica-companion/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"qinx.litematicacompanion.LitematicaCompanion"
+		],
+		"fabric-datagen": [
+			"qinx.litematicacompanion.LitematicaCompanionDataGenerator"
+		],
+		"Client": [
+			"qinx.litematicacompanion.LitematicaCompanionClient"
+		]
+	},
+	"mixins": [
+		"litematica-companion.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.18.5",
+		"minecraft": "~1.21.11",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
