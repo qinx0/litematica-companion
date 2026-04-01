@@ -1,8 +1,7 @@
 package qinx.litematicacompanion.gui;
 
-import fi.dy.masa.litematica.data.DataManager;
-import fi.dy.masa.litematica.materials.MaterialListBase;
-import fi.dy.masa.litematica.materials.MaterialListEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.DrawnTextConsumer;
 import net.minecraft.client.font.TextRenderer;
@@ -20,6 +19,7 @@ public class BlockListWidget extends ClickableWidget {
     private final List<String> blockList = new ArrayList<>();
     private int scrollOffset = 0;
     private static final int ITEM_HEIGHT = 12;
+    private static final Logger log = LoggerFactory.getLogger(BlockListWidget.class);
 
     public BlockListWidget(int x, int y, int width, int height) {
         super(x, y, width, height, Text.empty());
@@ -52,68 +52,107 @@ public class BlockListWidget extends ClickableWidget {
         blockList.clear();
 
         try {
-            MaterialListBase materialList = DataManager.getMaterialList();
+            // Try to auto-refresh the material list from active placements
+            fi.dy.masa.litematica.schematic.placement.SchematicPlacementManager manager =
+                    fi.dy.masa.litematica.data.DataManager.getSchematicPlacementManager();
 
-            if (materialList == null) {
+            if (manager == null || manager.getAllSchematicsPlacements().isEmpty()) {
                 blockList.add("§cNo schematic loaded");
                 return;
             }
 
-            List<MaterialListEntry> entries = materialList.getMaterialsAll();
+            fi.dy.masa.litematica.schematic.placement.SchematicPlacement placement =
+                    manager.getAllSchematicsPlacements().get(0);
+
+            fi.dy.masa.litematica.materials.MaterialListSchematic materialList =
+                    new fi.dy.masa.litematica.materials.MaterialListSchematic(
+                            placement.getSchematic(),
+                            placement.getSchematic().getAreas().keySet(),
+                            true
+                    );
+
+            List<fi.dy.masa.litematica.materials.MaterialListEntry> entries =
+                    materialList.getMaterialsAll();
 
             if (entries == null || entries.isEmpty()) {
                 blockList.add("§cMaterial list is empty");
-                blockList.add("§7Open Litematica and");
-                blockList.add("§7refresh the material list");
                 return;
             }
 
-            for (MaterialListEntry entry : entries) {
+            for (fi.dy.masa.litematica.materials.MaterialListEntry entry : entries) {
                 String name = entry.getStack().getName().getString();
                 long total = entry.getCountTotal();
                 long missing = entry.getCountMissing();
                 blockList.add("§f" + name);
-                blockList.add("  §7Total: §e" + total + " §7Missing: §c" + missing);
+                blockList.add("  §7Need: §e" + total + " §cMissing: " + missing);
             }
 
         } catch (Exception e) {
-            blockList.add("§cLitematica not found");
+            blockList.add("§cError: " + e.getMessage());
         }
-        this.width = calculateWidth();
+    }
+
+    private float renderScale = 1.0f;
+
+    public void setRenderScale(float scale) {
+        this.renderScale = scale;
+        log.info("New scale is " + scale);
     }
 
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-        //  Background
-        context.fill(getX(), getY(), getX() + this.width, getY() + this.height, 0xCC000000);
+        var stack = context.getMatrices();
+        stack.pushMatrix();
+
+        // Move to the top-left corner of the widget
+        stack.translate((float)getX(), (float)getY());
+
+        // Scale BOTH width and height axes
+        stack.scale(renderScale, renderScale);
+
+        // Background (Starts at 0, 0)
+        context.fill(0, 0, this.width, this.height, 0xCC000000);
 
         // Border
-        context.fill(getX(), getY(), getX() + this.width, getY() + 1, 0xFFFFFFFF);
-        context.fill(getX(), getY(), getX() + 1, getY() + this.height, 0xFFFFFFFF);
-        context.fill(getX() + this.width - 1, getY(), getX() + this.width, getY() + this.height, 0xFFFFFFFF);
-        context.fill(getX(), getY() + this.height - 1, getX() + this.width, getY() + this.height, 0xFFFFFFFF);
+        context.fill(0, 0, this.width, 1, 0xFFFFFFFF); // Top
+        context.fill(0, 0, 1, this.height, 0xFFFFFFFF); // Left
+        context.fill(this.width - 1, 0, this.width, this.height, 0xFFFFFFFF); // Right
+        context.fill(0, this.height - 1, this.width, this.height, 0xFFFFFFFF); // Bottom
 
         DrawnTextConsumer consumer = context.getTextConsumer();
 
-        // Title
-        consumer.text(getX() + 4, getY() + 4, Text.literal("§fBlock List"));
+        // Title (4 pixels in from the new 0,0)
+        consumer.text(4, 4, Text.literal("§fBlock List"));
 
         // Divider
-        context.fill(getX(), getY() + 14, getX() + this.width, getY() + 15, 0xFFAAAAAA);
+        context.fill(0, 14, this.width, 15, 0xFFAAAAAA);
 
         // Entries
         int maxVisible = (this.height - 28) / ITEM_HEIGHT;
         for (int i = scrollOffset; i < Math.min(scrollOffset + maxVisible, blockList.size()); i++) {
             consumer.text(
-                    getX() + 4,
-                    getY() + 18 + (i - scrollOffset) * ITEM_HEIGHT,
+                    4,
+                    18 + (i - scrollOffset) * ITEM_HEIGHT,
                     Text.literal(blockList.get(i))
             );
         }
 
-        // Divider + scroll hint
-        context.fill(getX(), getY() + this.height - 12, getX() + this.width, getY() + this.height - 11, 0xFFAAAAAA);
-        consumer.text(getX() + 4, getY() + this.height - 10, Text.literal("§8scroll to see more"));
+        // Bottom section
+        context.fill(0, this.height - 12, this.width, this.height - 11, 0xFFAAAAAA);
+        consumer.text(4, this.height - 10, Text.literal("§8scroll to see more"));
+
+        stack.popMatrix();
+
+    }
+
+    @Override
+    public boolean isMouseOver(double mouseX, double mouseY) {
+        // The "Hitbox" must be shrunk to match the visual size
+        double scaledWidth = this.width * renderScale;
+        double scaledHeight = this.height * renderScale;
+
+        return mouseX >= this.getX() && mouseX <= this.getX() + scaledWidth &&
+                mouseY >= this.getY() && mouseY <= this.getY() + scaledHeight;
     }
 
     @Override

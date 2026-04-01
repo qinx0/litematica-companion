@@ -47,6 +47,8 @@ dependencies {
 	modImplementation "me.fallenbreath:conditional-mixin-fabric:0.6.4"
 
 	modImplementation "maven.modrinth:modmenu:Tyk71iSw"
+	modImplementation "maven.modrinth:jei:oHe0elMI"
+	modImplementation "com.ptsmods:devlogin:3.5" // For Fabric and Quilt
 
 	
 }
