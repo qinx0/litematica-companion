@@ -22,6 +22,10 @@ repositories {
 	}
 	maven { url = "https://masa.dy.fi/maven/sakura-ryoko" }
 	maven { url = "https://maven.fallenbreath.me/releases" } // needed for conditional-mixin
+	maven {
+		name = "Terraformers"
+		url = "https://maven.terraformersmc.com/"
+	}
 	mavenCentral()
 }
 
@@ -46,9 +50,9 @@ dependencies {
 	modRuntimeOnly "fi.dy.masa.malilib:malilib-fabric-1.21.11:0.27.7"
 	modImplementation "me.fallenbreath:conditional-mixin-fabric:0.6.4"
 
-	modImplementation "maven.modrinth:modmenu:Tyk71iSw"
+	modCompileOnly "maven.modrinth:modmenu:17.0.0"
 	modImplementation "maven.modrinth:jei:oHe0elMI"
-	modImplementation "com.ptsmods:devlogin:3.5" // For Fabric and Quilt
+	modImplementation "maven.modrinth:modmenu:17.0.0"
 
 	
 }

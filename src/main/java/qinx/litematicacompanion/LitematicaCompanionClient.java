@@ -1,10 +1,11 @@
 package qinx.litematicacompanion;
 
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.ClientModInitializer;
+import qinx.litematicacompanion.config.Configs;
 
-public class LitematicaCompanionClient implements ModInitializer {
+public class LitematicaCompanionClient implements ClientModInitializer {
     @Override
-    public void onInitialize() {
-
+    public void onInitializeClient() {
+        Configs.INSTANCE.getClass();
     }
 }

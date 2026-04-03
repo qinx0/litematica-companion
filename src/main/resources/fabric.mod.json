@@ -18,8 +18,11 @@
 		"main": [
 			"qinx.litematicacompanion.LitematicaCompanion"
 		],
-		"Client": [
+		"client": [
 			"qinx.litematicacompanion.LitematicaCompanionClient"
+		],
+		"modmenu": [
+			"qinx.litematicacompanion.integration.ModMenuIntegration"
 		]
 	},
 	"mixins": [
