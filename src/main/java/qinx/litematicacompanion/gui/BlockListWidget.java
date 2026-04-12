@@ -1,5 +1,6 @@
 package qinx.litematicacompanion.gui;
 
+import net.minecraft.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.client.MinecraftClient;
@@ -17,11 +18,33 @@ import java.util.List;
 public class BlockListWidget extends ClickableWidget {
     private final MinecraftClient client = MinecraftClient.getInstance();
     private final TextRenderer textRenderer;
-    private final List<String> blockList = new ArrayList<>();
+//    private final List<String> blockList = new ArrayList<>();
+
+    private static class BlockEntry {
+        ItemStack itemStack;
+        String nameLine;
+        String countLine;
+
+        BlockEntry(ItemStack stack, String name, String count) {
+            this.itemStack = stack;
+            this.nameLine = name;
+            this.countLine = count;
+        }
+
+        static BlockEntry info(String message) {
+            return new BlockEntry(null, message, null);
+        }
+
+        static BlockEntry block(ItemStack stack, String name, String count) {
+            return new BlockEntry(stack, name, count);
+        }
+    }
+    private List<BlockEntry> blockEntries = new ArrayList<>();
+
     private final List<fi.dy.masa.litematica.schematic.placement.SchematicPlacement> placements = new ArrayList<>();
     private int selectedPlacementIndex = 0;
     private int scrollOffset = 0;
-    private static final int ITEM_HEIGHT = 12;
+    private static final int ITEM_HEIGHT = 18;
     private static final Logger log = LoggerFactory.getLogger(BlockListWidget.class);
 
     private boolean dropdownOpen = false;
@@ -43,8 +66,14 @@ public class BlockListWidget extends ClickableWidget {
         maxTextWidth = Math.max(maxTextWidth, textRenderer.getWidth(Text.literal("§fBlock List")));
         maxTextWidth = Math.max(maxTextWidth, textRenderer.getWidth(getDropdownText()));
 
-        for (String line : blockList) {
-            maxTextWidth = Math.max(maxTextWidth, textRenderer.getWidth(Text.literal(line)));
+        for (BlockEntry entry : blockEntries) {
+            int nameWidth = textRenderer.getWidth(Text.literal(entry.nameLine));
+            maxTextWidth = Math.max(maxTextWidth, nameWidth + 18);  // +18 for icon
+
+            if (entry.countLine != null) {
+                int countWidth = textRenderer.getWidth(Text.literal(entry.countLine));
+                maxTextWidth = Math.max(maxTextWidth, countWidth + 18);
+            }
         }
 
         maxTextWidth = Math.max(maxTextWidth, textRenderer.getWidth(Text.literal("§8scroll to see more")));
@@ -64,7 +93,7 @@ public class BlockListWidget extends ClickableWidget {
     }
 
     public void refreshBlockList() {
-        blockList.clear();
+        blockEntries.clear();
         placements.clear();
         selectedPlacementIndex = 0;
         scrollOffset = 0;
@@ -74,7 +103,7 @@ public class BlockListWidget extends ClickableWidget {
                     fi.dy.masa.litematica.data.DataManager.getSchematicPlacementManager();
 
             if (manager == null || manager.getAllSchematicsPlacements().isEmpty()) {
-                blockList.add("§cNo schematic loaded");
+                blockEntries.add(BlockEntry.info("§cNo schematic loaded"));
                 return;
             }
 
@@ -83,17 +112,17 @@ public class BlockListWidget extends ClickableWidget {
 
         } catch (Exception e) {
             log.error("Failed to load schematic placements", e);
-            blockList.add("§cFailed to load materials");
-            blockList.add("§7Check logs for details");
+            blockEntries.add(BlockEntry.info("§cFailed to load materials"));
+            blockEntries.add(BlockEntry.info("§7Check logs for details"));
         }
     }
 
     private void loadMaterialsForCurrentPlacement() {
-        blockList.clear();
+        blockEntries.clear();
         scrollOffset = 0;
 
         if (placements.isEmpty() || selectedPlacementIndex >= placements.size()) {
-            blockList.add("§cNo placement selected");
+            blockEntries.add(BlockEntry.info("§cNo placement selected"));
             return;
         }
 
@@ -102,7 +131,7 @@ public class BlockListWidget extends ClickableWidget {
                     placements.get(selectedPlacementIndex);
 
             if (placement.getSchematic() == null) {
-                blockList.add("§cSchematic is null");
+                blockEntries.add(BlockEntry.info("§cSchematic is null"));
                 return;
             }
 
@@ -117,7 +146,7 @@ public class BlockListWidget extends ClickableWidget {
                     materialList.getMaterialsAll();
 
             if (entries == null || entries.isEmpty()) {
-                blockList.add("§cMaterial list is empty");
+                blockEntries.add(BlockEntry.info("§cMaterial list is empty"));
                 return;
             }
 
@@ -125,14 +154,13 @@ public class BlockListWidget extends ClickableWidget {
                 String name = entry.getStack().getName().getString();
                 long total = entry.getCountTotal();
                 long missing = entry.getCountMissing();
-                blockList.add("§f" + name);
-                blockList.add("  §7Need: §e" + total + " §cMissing: " + missing);
+                blockEntries.add(BlockEntry.block(entry.getStack(), "§f" + name, "  §7Need: §e" + total + " §cMissing: " + missing));
             }
 
         } catch (Exception e) {
             log.error("Failed to load materials for placement " + selectedPlacementIndex, e);
-            blockList.add("§cFailed to load materials");
-            blockList.add("§7Check logs for details");
+            blockEntries.add(BlockEntry.info("§cFailed to load materials"));
+            blockEntries.add(BlockEntry.info("§7Check logs for details"));
         }
     }
 
@@ -209,9 +237,21 @@ public class BlockListWidget extends ClickableWidget {
         context.fill(0, entriesTop, this.width, entriesTop + 1, 0xFFAAAAAA);
 
         if (!dropdownOpen) {
+            // Each BlockEntry renders 2 lines, so double the height calculation
             int maxVisible = (entriesBottom - entriesTop - 4) / ITEM_HEIGHT;
-            for (int i = scrollOffset; i < Math.min(scrollOffset + maxVisible, blockList.size()); i++) {
-                consumer.text(4, entriesTop + 4 + (i - scrollOffset) * ITEM_HEIGHT, Text.literal(blockList.get(i)));
+            for (int i = scrollOffset; i < Math.min(scrollOffset + maxVisible, blockEntries.size()); i++) {
+                BlockEntry entry = blockEntries.get(i);
+                int y = entriesTop + 4 + (i - scrollOffset) * ITEM_HEIGHT;
+
+                if (entry.itemStack != null) {
+                    // Block: draw icon + both lines (offset for icon)
+                    context.drawItem(entry.itemStack, 4, y);
+                    consumer.text(22, y, Text.literal(entry.nameLine));
+                    consumer.text(22, y + ITEM_HEIGHT/2, Text.literal(entry.countLine));
+                } else {
+                    // Info message: just single line, no icon
+                    consumer.text(4, y + ITEM_HEIGHT/2, Text.literal(entry.nameLine));
+                }
             }
 
             context.fill(0, entriesBottom, this.width, entriesBottom + 1, 0xFFAAAAAA);
@@ -233,17 +273,14 @@ public class BlockListWidget extends ClickableWidget {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
         if (!isMouseOver(mouseX, mouseY)) return false;
+        if (dropdownOpen) return true;
 
-        if (dropdownOpen) {
-            return true;
-        }
-
-        int entriesTop = TITLE_HEIGHT + DROPDOWN_HEIGHT;
+        int entriesTop = TITLE_HEIGHT + 1 + DROPDOWN_HEIGHT;
         int entriesBottom = this.height - FOOTER_HEIGHT - 1;
         int maxVisible = (entriesBottom - entriesTop - 4) / ITEM_HEIGHT;
 
         scrollOffset -= (int) verticalAmount;
-        scrollOffset = Math.max(0, Math.min(scrollOffset, Math.max(0, blockList.size() - maxVisible)));
+        scrollOffset = Math.clamp(scrollOffset, 0, Math.max(0, blockEntries.size() - maxVisible));
         return true;
     }
 
