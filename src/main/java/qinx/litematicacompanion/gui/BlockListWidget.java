@@ -185,7 +185,9 @@ public class BlockListWidget extends ClickableWidget {
 
         int contentHeight = dropdownOpen ? TITLE_HEIGHT + DROPDOWN_HEIGHT + (this.height - TITLE_HEIGHT - FOOTER_HEIGHT) : this.height;
 
-        context.fill(0, 0, this.width, contentHeight, opacity);
+        int bgColor = qinx.litematicacompanion.config.Configs.getBackgroundColorValue();
+        int bgColorWithAlpha = (bgColor & 0x00FFFFFF) | (opacity & 0xFF000000);
+        context.fill(0, 0, this.width, contentHeight, bgColorWithAlpha);
 
         context.fill(0, 0, this.width, 1, 0xFFFFFFFF);
         context.fill(0, 0, 1, contentHeight, 0xFFFFFFFF);
