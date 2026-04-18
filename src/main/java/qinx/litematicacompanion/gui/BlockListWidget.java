@@ -45,6 +45,8 @@ public class BlockListWidget extends ClickableWidget {
     private int selectedPlacementIndex = 0;
     private int scrollOffset = 0;
     private static final int ITEM_HEIGHT = 18;
+    private fi.dy.masa.litematica.materials.MaterialListSchematic currentMaterialList;
+
     private static final Logger log = LoggerFactory.getLogger(BlockListWidget.class);
 
     private boolean dropdownOpen = false;
@@ -145,6 +147,12 @@ public class BlockListWidget extends ClickableWidget {
             List<fi.dy.masa.litematica.materials.MaterialListEntry> entries =
                     materialList.getMaterialsAll();
 
+            this.currentMaterialList = materialList;
+            fi.dy.masa.litematica.materials.MaterialListUtils.updateAvailableCounts(
+                    materialList.getMaterialsAll(),
+                    client.player  // Need to pass the player!
+            );
+
             if (entries == null || entries.isEmpty()) {
                 blockEntries.add(BlockEntry.info("§cMaterial list is empty"));
                 return;
@@ -153,8 +161,16 @@ public class BlockListWidget extends ClickableWidget {
             for (fi.dy.masa.litematica.materials.MaterialListEntry entry : entries) {
                 String name = entry.getStack().getName().getString();
                 long total = entry.getCountTotal();
-                long missing = entry.getCountMissing();
-                blockEntries.add(BlockEntry.block(entry.getStack(), "§f" + name, "  §7Need: §e" + total + " §cMissing: " + missing));
+                long available = entry.getCountAvailable();
+                long missingRaw = entry.getCountMissing();
+                long missing = Math.max(0, missingRaw - available);  // True missing
+
+                String countLine = String.format("  §7Need: §e%d §8| §7Have: §e%d §8| §cMissing: §e%d",
+                        total, available, missing);
+//                String name = entry.getStack().getName().getString();
+//                long total = entry.getCountTotal();
+//                long missing = entry.getCountMissing();
+                blockEntries.add(BlockEntry.block(entry.getStack(), "§f" + name, countLine));
             }
 
         } catch (Exception e) {

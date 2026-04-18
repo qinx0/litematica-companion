@@ -53,8 +53,7 @@ dependencies {
 	modCompileOnly "maven.modrinth:modmenu:17.0.0"
 	//modImplementation "maven.modrinth:jei:oHe0elMI"
 	modImplementation "maven.modrinth:modmenu:17.0.0"
-
-	
+	modImplementation "com.ptsmods:devlogin:3.5"
 }
 
 processResources {
