@@ -11,7 +11,7 @@ import java.util.List;
 public class ConfigGui extends GuiConfigsBase {
 
     public ConfigGui() {
-        super(10, 50, "litematica-companion", null, "litematica-companion.gui.title.configs", String.format("Litematica Companion Config"));
+        super(10, 50, "litematica-companion", null, "litematica-companion.gui.title.configs", "Litematica Companion Configs");
     }
 
     @Override
