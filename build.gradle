@@ -44,14 +44,14 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	modCompileOnly "fi.dy.masa.litematica:litematica-fabric-1.21.11:0.26.2"
-	modRuntimeOnly "fi.dy.masa.litematica:litematica-fabric-1.21.11:0.26.2"
-	modCompileOnly "fi.dy.masa.malilib:malilib-fabric-1.21.11:0.27.7"
-	modRuntimeOnly "fi.dy.masa.malilib:malilib-fabric-1.21.11:0.27.7"
-	modImplementation "me.fallenbreath:conditional-mixin-fabric:0.6.4"
+	modCompileOnly "fi.dy.masa.litematica:litematica-fabric-${project.litematica_mc_version}:${project.litematica_version}"
+	modRuntimeOnly "fi.dy.masa.litematica:litematica-fabric-${project.litematica_mc_version}:${project.litematica_version}"
+	modCompileOnly "fi.dy.masa.malilib:malilib-fabric-${project.litematica_mc_version}:${project.malilib_version}"
+	modRuntimeOnly "fi.dy.masa.malilib:malilib-fabric-${project.litematica_mc_version}:${project.malilib_version}"
+	modImplementation "me.fallenbreath:conditional-mixin-fabric:${project.conditional_mixin_version}"
 
 	modCompileOnly "maven.modrinth:modmenu:17.0.0"
-	//modImplementation "maven.modrinth:jei:oHe0elMI"
+//	modImplementation "maven.modrinth:jei:oHe0elMI"
 	modImplementation "maven.modrinth:modmenu:17.0.0"
 	modImplementation "com.ptsmods:devlogin:3.5"
 }
