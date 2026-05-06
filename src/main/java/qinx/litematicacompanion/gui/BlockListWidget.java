@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.DrawnTextConsumer;
+//import net.minecraft.client.font.DrawnTextConsumer;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
@@ -210,9 +210,9 @@ public class BlockListWidget extends ClickableWidget {
         context.fill(this.width - 1, 0, this.width, contentHeight, 0xFFFFFFFF);
         context.fill(0, contentHeight - 1, this.width, contentHeight, 0xFFFFFFFF);
 
-        DrawnTextConsumer consumer = context.getTextConsumer();
+        //DrawnTextConsumer consumer = context.getTextConsumer();
 
-        consumer.text(4, 4, Text.literal("§fBlock List"));
+        context.drawTextWithShadow(client.textRenderer,Text.literal("§fBlock List"), 4, 4, 0xFFFFFFFF);
 
         context.fill(0, TITLE_HEIGHT, this.width, TITLE_HEIGHT + 1, 0xFFAAAAAA);
 
@@ -222,7 +222,7 @@ public class BlockListWidget extends ClickableWidget {
         if (dropdownOpen && placements.size() > 1) {
             int dropdownBg = (opacity & 0xFF000000) >> 2;
             context.fill(0, listTop, this.width, listTop + DROPDOWN_HEIGHT, dropdownBg | 0x000000);
-            consumer.text(4, listTop + 3, getDropdownText());
+            context.drawTextWithShadow(client.textRenderer, getDropdownText(), 4, listTop + 3, 0xFFFFFFFF);
 
             listTop += DROPDOWN_HEIGHT;
 
@@ -234,12 +234,12 @@ public class BlockListWidget extends ClickableWidget {
                 String name = placements.get(i).getSchematic().getMetadata().getName();
                 String displayName = name.isEmpty() ? "Unnamed" : name;
                 Text itemText = Text.literal(i == selectedPlacementIndex ? "§e• " + displayName : "§7  " + displayName);
-                consumer.text(4, dropdownListTop + i * ITEM_HEIGHT, itemText);
+                context.drawTextWithShadow(client.textRenderer, itemText, 4, dropdownListTop + i * ITEM_HEIGHT, 0xFFFFFFFF);
             }
 
             listTop += dropdownListHeight;
         } else {
-            consumer.text(4, listTop + 3, getDropdownText());
+            context.drawTextWithShadow(client.textRenderer, getDropdownText(), 4, listTop + 3, 0xFFFFFFFF);
         }
 
         int entriesTop;
@@ -264,16 +264,16 @@ public class BlockListWidget extends ClickableWidget {
                 if (entry.itemStack != null) {
                     // Block: draw icon + both lines (offset for icon)
                     context.drawItem(entry.itemStack, 4, y);
-                    consumer.text(22, y, Text.literal(entry.nameLine));
-                    consumer.text(22, y + ITEM_HEIGHT/2, Text.literal(entry.countLine));
+                    context.drawTextWithShadow(client.textRenderer, Text.literal(entry.nameLine),22, y, 0xFFFFFFFF);
+                    context.drawTextWithShadow(client.textRenderer, Text.literal(entry.countLine), 22, y + ITEM_HEIGHT/2, 0xFFFFFFFF);
                 } else {
                     // Info message: just single line, no icon
-                    consumer.text(4, y + ITEM_HEIGHT/2, Text.literal(entry.nameLine));
+                    context.drawTextWithShadow(client.textRenderer, Text.literal(entry.nameLine), 4, y + ITEM_HEIGHT/2, 0xFFFFFFFF);
                 }
             }
 
             context.fill(0, entriesBottom, this.width, entriesBottom + 1, 0xFFAAAAAA);
-            consumer.text(4, entriesBottom + 2, Text.literal("§8scroll to see more"));
+            context.drawTextWithShadow(client.textRenderer, Text.literal("§8scroll to see more"), 4, entriesBottom + 2, 0xFFFFFFFF);
         }
 
         stack.popMatrix();

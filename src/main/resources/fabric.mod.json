@@ -30,10 +30,10 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.18.5",
-		"minecraft": "~1.21.11",
+		"minecraft": "~1.21.10",
 		"java": ">=21",
 		"fabric-api": "*",
-		"litematica": "*",
-		"malilib": "*"
+		"litematica": "${litematica_version}",
+		"malilib": "${malilib_version}"
 	}
 }

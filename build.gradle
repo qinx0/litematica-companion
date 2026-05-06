@@ -44,23 +44,27 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	modCompileOnly "fi.dy.masa.litematica:litematica-fabric-${project.litematica_mc_version}:${project.litematica_version}"
-	modRuntimeOnly "fi.dy.masa.litematica:litematica-fabric-${project.litematica_mc_version}:${project.litematica_version}"
-	modCompileOnly "fi.dy.masa.malilib:malilib-fabric-${project.litematica_mc_version}:${project.malilib_version}"
-	modRuntimeOnly "fi.dy.masa.malilib:malilib-fabric-${project.litematica_mc_version}:${project.malilib_version}"
+	modCompileOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
+	modRuntimeOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
+	modCompileOnly "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+	modRuntimeOnly "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
 	modImplementation "me.fallenbreath:conditional-mixin-fabric:${project.conditional_mixin_version}"
 
-	modCompileOnly "maven.modrinth:modmenu:17.0.0"
+	modCompileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
 //	modImplementation "maven.modrinth:jei:oHe0elMI"
-	modImplementation "maven.modrinth:modmenu:17.0.0"
+	modImplementation "maven.modrinth:modmenu:${project.modmenu_version}"
 	modImplementation "com.ptsmods:devlogin:3.5"
 }
 
 processResources {
 	inputs.property "version", project.version
+	inputs.property "litematica_version", project.litematica_version
+	inputs.property "malilib_version", project.malilib_version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": inputs.properties.version
+		expand "version": inputs.properties.version,
+				"litematica_version": inputs.properties.litematica_version,
+				"malilib_version": inputs.properties.malilib_version
 	}
 }
 
