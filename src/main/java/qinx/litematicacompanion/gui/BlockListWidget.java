@@ -9,7 +9,7 @@ import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.ClickableWidget;
-import net.minecraft.client.gui.Click;
+//import net.minecraft.client.gui.Click;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -302,12 +302,14 @@ public class BlockListWidget extends ClickableWidget {
         return true;
     }
 
-    @Override
-    public boolean mouseClicked(Click click, boolean doubled) {
-        double mouseX = click.x();
-        double mouseY = click.y();
-        
-        if (!isMouseOver(mouseX, mouseY)) return false;
+    //@Override
+//    public boolean mouseClicked(Click click, boolean doubled) {
+//        double mouseX = click.x();
+//        double mouseY = click.y();
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+
+
+            if (!isMouseOver(mouseX, mouseY)) return false;
 
         double scaledX = (mouseX - getX()) / renderScale;
         double scaledY = (mouseY - getY()) / renderScale;
