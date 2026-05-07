@@ -44,10 +44,10 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	modCompileOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
-	modRuntimeOnly "fi.dy.masa.litematica:litematica-fabric-${project.minecraft_version}:${project.litematica_version}"
-	modCompileOnly "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
-	modRuntimeOnly "fi.dy.masa.malilib:malilib-fabric-${project.minecraft_version}:${project.malilib_version}"
+	modCompileOnly "maven.modrinth:litematica:${project.litematica_version}"
+	modRuntimeOnly "maven.modrinth:litematica:${project.litematica_version}"
+	modCompileOnly "maven.modrinth:malilib:${project.malilib_version}"
+	modRuntimeOnly "maven.modrinth:malilib:${project.malilib_version}"
 	modImplementation "me.fallenbreath:conditional-mixin-fabric:${project.conditional_mixin_version}"
 
 	modCompileOnly "maven.modrinth:modmenu:${project.modmenu_version}"
