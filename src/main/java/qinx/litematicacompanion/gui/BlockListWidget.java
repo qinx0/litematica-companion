@@ -194,10 +194,10 @@ public class BlockListWidget extends ClickableWidget {
     @Override
     protected void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
         var stack = context.getMatrices();
-        stack.pushMatrix();
+        stack.push();
 
-        stack.translate((float)getX(), (float)getY());
-        stack.scale(renderScale, renderScale);
+        stack.translate((float)getX(), (float)getY(), 0f);
+        stack.scale(renderScale, renderScale, 1f);
 
         int contentHeight = dropdownOpen ? TITLE_HEIGHT + DROPDOWN_HEIGHT + (this.height - TITLE_HEIGHT - FOOTER_HEIGHT) : this.height;
 
@@ -276,7 +276,7 @@ public class BlockListWidget extends ClickableWidget {
             context.drawTextWithShadow(client.textRenderer, Text.literal("§8scroll to see more"), 4, entriesBottom + 2, 0xFFFFFFFF);
         }
 
-        stack.popMatrix();
+        stack.pop();
     }
 
     @Override
