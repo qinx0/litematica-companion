@@ -13,8 +13,8 @@ Versions:
  - [x] 1.21.4
  - [x] 1.21.3
  - [x] 1.21.2
- - [ ] 1.21.1
- - [ ] 1.21
+ - [x] 1.21.1
+ - [x] 1.21
 
 Shield: [![CC BY-NC 4.0][cc-by-nc-shield]][cc-by-nc]
 
