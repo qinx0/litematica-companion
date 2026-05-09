@@ -290,7 +290,7 @@ public class BlockListWidget extends ClickableWidget {
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
-        log.info("mouseScrolled called: isOver={}", isMouseOver(mouseX, mouseY));
+        //log.info("mouseScrolled called: isOver={}", isMouseOver(mouseX, mouseY));
         if (!isMouseOver(mouseX, mouseY)) return false;
         if (dropdownOpen) return true;
 
