@@ -1,6 +1,6 @@
 package qinx.litematicacompanion.mixin;
 
-import net.minecraft.client.MinecraftClient;
+//import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.text.Text;
@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+//import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import qinx.litematicacompanion.config.Configs;
 import qinx.litematicacompanion.gui.BlockListWidget;
 
@@ -40,6 +40,7 @@ public abstract class InventoryScreenMixin extends Screen {
     static {
         detectMods();
     }
+
 
     private static void detectMods() {
         try {
@@ -113,11 +114,12 @@ public abstract class InventoryScreenMixin extends Screen {
         this.addDrawableChild(blockListWidget);
     }
 
-    @Inject(method = "mouseScrolled", at = @At("HEAD"), cancellable = true)
-    private void onMouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount, CallbackInfoReturnable<Boolean> cir) {
-        if (blockListWidget != null && blockListWidget.isMouseOver(mouseX, mouseY)) {
-            blockListWidget.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
-            cir.setReturnValue(true);
-        }
-    }
+//    public boolean mouseScrolled(double mouseX, double mouseY, double horizontalAmount, double verticalAmount) {
+//        log.info("InventoryScreenMixin.mouseScrolled called");
+//        if (blockListWidget != null && blockListWidget.isMouseOver(mouseX, mouseY)) {
+//            blockListWidget.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+//            return true;
+//        }
+//        return super.mouseScrolled(mouseX, mouseY, horizontalAmount, verticalAmount);
+//    }
 }

@@ -2,11 +2,14 @@
 	"required": true,
 	"package": "qinx.litematicacompanion.mixin",
 	"compatibilityLevel": "JAVA_21",
+	"priority": 1100,
 	"mixins": [
 		"InventoryScreenMixin"
 	],
 	"client": [
-		"InventoryScreenMixin"
+		"InventoryScreenMixin",
+		"InventoryScreenMixinAccessor",
+		"MouseScrollMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
